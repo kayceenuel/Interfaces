@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"io"
 	"testing"
 )
 
@@ -29,4 +30,25 @@ func TestBufferWrite(t *testing.T) {
 		t.Errorf("Expected %v, got %v", expected, got)
 	}
 
+}
+
+// TestBufferReadAll ensures that reading all bytes at once retrieves the full content and empties the buffer.
+func TestBufferReadAll(t *testing.T) {
+	buf := bytes.NewBufferString("hello world")
+	p := make([]byte, 11)
+	n, err := buf.Read(p)
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+	if n != 11 {
+		t.Errorf("Expected to read 11 bytes, got %d", n)
+	}
+	if !bytes.Equal(p, []byte("hello world")) {
+		t.Errorf("Expected %v, got %v", []byte("hello world"), p)
+	}
+	// Verify the buffer is empty after reading all bytes
+	n, err = buf.Read(p)
+	if n != 0 || err != io.EOF {
+		t.Errorf("Expected 0, io.EOF; got %d, %v", n, err)
+	}
 }
