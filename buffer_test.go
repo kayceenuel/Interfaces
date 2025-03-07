@@ -15,3 +15,18 @@ func TestBufferInitialBytes(t *testing.T) {
 		t.Errorf("Expected %v, got %v", expected, got)
 	}
 }
+
+// TestBufferWrite test writing to the Buffer
+func TestBufferWrite(t *testing.T) {
+	buff := bytes.NewBufferString("hello")
+	_, err := buff.Write([]byte(" world"))
+	if err != nil {
+		t.Errorf("Write failed: %v", err)
+	}
+
+	expected := []byte("hello world")
+	if got := buff.Bytes(); !bytes.Equal(got, expected) {
+		t.Errorf("Expected %v, got %v", expected, got)
+	}
+
+}
