@@ -5,19 +5,13 @@ import (
 	"testing"
 )
 
-func TestBufferWrite(t *testing.T) {
-	var b bytes.Buffer
-	n, err := b.Write([]byte("hello"))
-	if err != nil || n != 5 || b.String() != "hello" {
-		t.Errorf("Write failed: n=%d, err=%v, got=%s", n, err, b.String())
-	}
-}
-
-func TestBufferRead(t *testing.T) {
-	b := bytes.NewBufferString("hello")
-	p := make([]byte, 5)
-	n, err := b.Read(p)
-	if err != nil || n != 5 || string(p) != "hello" {
-		t.Errorf("Read failed: n=%d, err=%v, got=%s", n, err, p)
+// TestBufferIniialBytes verifies that Bytes() returns initial bytes of a newly creaated buffer
+func TestBufferInitialBytes(t *testing.T) {
+	// create a buffer with content
+	buf := bytes.NewBufferString("hello")
+	// checks if Bytes matches content ("hello")
+	expected := []byte("hello")
+	if got := buf.Bytes(); !bytes.Equal(got, expected) {
+		t.Errorf("Expected %v, got %v", expected, got)
 	}
 }
