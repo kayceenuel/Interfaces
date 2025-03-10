@@ -86,3 +86,20 @@ func TestBufferPartialRead(t *testing.T) {
 		t.Errorf("Expected 0, io.EOF; got %d, %v", n, err)
 	}
 }
+
+func TestEmptyBuffer(t *testing.T) {
+	buf := bytes.NewBufferString("")
+	p := make([]byte, 5)
+	n, err := buf.Read(p)
+	if n != 0 || err != io.EOF {
+		t.Errorf("Expected 0, io.EOF; got %d, %v", n, err)
+	}
+
+	_, err = buf.Write([]byte("test"))
+	if err != nil {
+		t.Errorf("Write failed: %v", err)
+	}
+	if got := buf.Bytes(); !bytes.Equal(got, []byte("test")) {
+		t.Errorf("Expected %v, got %v", []byte("test"), got)
+	}
+}
