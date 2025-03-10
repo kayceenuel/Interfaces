@@ -65,19 +65,19 @@ func TestBufferPartialRead(t *testing.T) {
 		t.Errorf("Expected to read 5 bytes, got %d", n)
 	}
 	if !bytes.Equal(p1, []byte("hello")) {
-		t.Errorf("Expected %q, got %q", []byte("hello"), p1)
+		t.Errorf("Expected %v, got %v", []byte("hello"), p1)
 	}
 
-	p2 := make([]byte, 10)
+	p2 := make([]byte, 6)
+	n, err = buf.Read(p2)
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
 	if n != 6 {
-		t.Errorf("Expected to read 6 bytes, read %d", n)
+		t.Errorf("Expected to read 6 bytes, got %d", n)
 	}
-
-	if !bytes.Equal(p2[:n], []byte(" world")) {
-		t.Errorf("Expected to read %q, got %q", " world", p2[:n])
+	if !bytes.Equal(p2, []byte(" world")) {
+		t.Errorf("Expected %v, got %v", []byte(" world"), p2)
 	}
 
 	// Verify the buffer is empty after all reads
