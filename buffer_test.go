@@ -87,6 +87,7 @@ func TestBufferPartialRead(t *testing.T) {
 	}
 }
 
+// TestEmptyBuffer tests the behavior of an empty buffer for reading and writing.
 func TestEmptyBuffer(t *testing.T) {
 	buf := bytes.NewBufferString("")
 	p := make([]byte, 5)
@@ -101,5 +102,26 @@ func TestEmptyBuffer(t *testing.T) {
 	}
 	if got := buf.Bytes(); !bytes.Equal(got, []byte("test")) {
 		t.Errorf("Expected %v, got %v", []byte("test"), got)
+	}
+}
+
+// TestBufferReadMoreThanAvailable checks reading more bytes than available in the buffer.
+func TestBufferReadMoreThanAvailable(t *testing.T) {
+	buf := bytes.NewBufferString("hello")
+	p := make([]byte, 10)
+	n, err := buf.Read(p)
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+	if n != 5 {
+		t.Errorf("Expected to read 5 byte, got %d", n)
+	}
+	if !bytes.Equal(p[:n], []byte("hello")) {
+		t.Errorf("Expected %v, got %v", []byte("hello"), p[:n])
+	}
+	// Next read should indicate buffer empty
+	n, err = buf.Read(p)
+	if n != 0 || err != io.EOF {
+		t.Errorf("Expected 0, io.EOF; got %d, %v", n, err)
 	}
 }
