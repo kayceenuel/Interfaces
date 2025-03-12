@@ -15,3 +15,9 @@ import (
 type filteringPipe struct {
 	writer io.Writer // The underlying writer to send filtered content to
 }
+
+// NewFilteringPipe creates a new filtering pipe that writes to the provided writer
+func NewFilteringPipe(w io.Writer) *filteringPipe {
+	//Create and return a new FilteringPipe that will write to w
+	return &filteringPipe{writer: w}
+}
