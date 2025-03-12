@@ -129,3 +129,26 @@ func TestOurByteBufferrReadPartial(t *testing.T) {
 		t.Errorf("Expected to read %q, got %q", " world", secondReadBuffer[:n])
 	}
 }
+
+// TestOurByteBufferBytesAfterRead ensures Bytes() returns all data regardless of read position
+func TestOurByteBufferBytesAfterRead(t *testing.T) {
+	// create a buffer with test content
+	initialContent := []byte("hello world")
+	buffer := NewOurByteBuffer(initialContent)
+
+	// Read some bytes to advance the read postion
+	readBuffer := make([]byte, 5)
+	_, err := buffer.Read(readBuffer)
+
+	// check for unexpected errors
+	if err != nil {
+		t.Fatalf("Unexpected error reading from buffer: %v", err)
+	}
+
+	//check if bytes() still returns all content despite having read some
+	result := buffer.Bytes()
+	if !bytes.Equal(result, initialContent) {
+		t.Errorf("Expected bytes() to return all content %q after reading, got %q",
+			initialContent, result)
+	}
+}
