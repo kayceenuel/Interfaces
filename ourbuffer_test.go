@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"io"
 	"testing"
 )
 
@@ -45,5 +46,40 @@ func TestOurByteBufferWrite(t *testing.T) {
 	result := buffer.Bytes()
 	if !bytes.Equal(result, expected) {
 		t.Errorf("Expected buffer to contain %q, got %q", expected, result)
+	}
+}
+
+func TestOurByteBufferReadAll(t *testing.T) {
+	//create a buffer with test content
+	initialContent := []byte("hello world")
+	buffer := NewOurByteBuffer(initialContent)
+
+	//create a destination slice large enough to hold all content
+	readBuffer := make([]byte, len(initialContent))
+	//Read from our buffer into the destination slice
+	n, err := buffer.Read(readBuffer)
+
+	//check for unexpected errors (EOF is expected after reading everything)
+	if err != nil && err != io.EOF {
+		t.Fatalf("Unexpected error reading from buffer: %v", err)
+	}
+
+	// verify we read the expected number of bytes
+	if n != len(initialContent) {
+		t.Errorf("Expected to read %d bytes, read %d", len(initialContent), n)
+	}
+
+	//check if what we read matches the original content
+	if !bytes.Equal(readBuffer, initialContent) {
+		t.Errorf("Expected to read %q, got %q", initialContent, readBuffer)
+	}
+
+	// Try to read again, should get EOF or 0 bytes
+	secondRead, err := buffer.Read(readBuffer)
+	if err != io.EOF {
+		t.Errorf("Expected EOF on second read, got %v", err)
+	}
+	if secondRead != 0 {
+		t.Errorf("Expected to read 0 bytes on second read, got %d", secondRead)
 	}
 }
