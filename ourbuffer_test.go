@@ -83,3 +83,49 @@ func TestOurByteBufferReadAll(t *testing.T) {
 		t.Errorf("Expected to read 0 bytes on second read, got %d", secondRead)
 	}
 }
+
+// TestOurByteBufferReadPartial tests reading content from a buffer in parts
+func TestOurByteBufferrReadPartial(t *testing.T) {
+	// create a buffer with a test content
+	initialContent := []byte("hello world")
+	buffer := NewOurByteBuffer(initialContent)
+
+	// create a small destination slice to read just part of the content
+	firstReadBuffer := make([]byte, 5)
+	// read the first 5 bytes
+	n, err := buffer.Read(firstReadBuffer)
+
+	// check for unexpected errors
+	if err != nil {
+		t.Fatalf("Unexpected error reading from buffer: %v", err)
+	}
+
+	// verifty we read the expected numbere of bytes
+	if n != 5 {
+		t.Errorf("Expected to read 5 bytes, read %d", n)
+	}
+
+	// check if what we read matches the first part of the original content
+	if !bytes.Equal(firstReadBuffer, []byte("hello")) {
+		t.Errorf("Expected to read %q, got %q", "hello", firstReadBuffer)
+	}
+
+	//create another destination slice to read the rest of the content
+	secondReadBuffer := make([]byte, 10) // larger than needed
+	//read the remaining contenet
+	n, err = buffer.Read(secondReadBuffer)
+	// Check for unexpected errors
+	if err != nil && err != io.EOF {
+		t.Fatalf("Unexpected error reading from buffer: %v", err)
+	}
+
+	// Verify we read the expected number of bytes
+	if n != 6 {
+		t.Errorf("Expected to read 6 bytes, read %d", n)
+	}
+
+	// Check if what we read matches the second part of the original content
+	if !bytes.Equal(secondReadBuffer[:n], []byte(" world")) {
+		t.Errorf("Expected to read %q, got %q", " world", secondReadBuffer[:n])
+	}
+}
