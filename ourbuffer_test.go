@@ -20,3 +20,30 @@ func TestOurByteBufferInit(t *testing.T) {
 		t.Errorf("Expected buffer to contain %q, got %q", initialContent, result)
 	}
 }
+
+// TestOurByteBufferWrite tests that writing to a buffer works correctly
+func TestOurByteBufferWrite(t *testing.T) {
+	// Create a buffer with initial content
+	initialContent := []byte("hello")
+	buffer := NewOurByteBuffer(initialContent)
+
+	// Write additional content to the buffer
+	additionalContent := []byte(" world")
+	n, err := buffer.Write(additionalContent)
+
+	//check for unexpected errors
+	if err != nil {
+		t.Fatalf("Unexpected error writing to buffer: %v", err)
+	}
+	// verify the write function reported the correct number of bytes written
+	if n != len(additionalContent) {
+		t.Errorf("Expected to write %d bytes, wrote %d", len(additionalContent), n)
+	}
+
+	// check if the buffer contains both the initial and additional content
+	expected := []byte("hello world")
+	result := buffer.Bytes()
+	if !bytes.Equal(result, expected) {
+		t.Errorf("Expected buffer to contain %q, got %q", expected, result)
+	}
+}
